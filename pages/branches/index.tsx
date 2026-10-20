@@ -29,6 +29,7 @@ export default function Dashboard() {
     const { userData } = useAuth();
     // const [profileData, setProfileData] = useState(null);
     const [totalBranches, setTotalBranches] = useState(0);
+    const [editBranchId, setEditBranchId] = useState<string | null>(null);
 
     const [cards, setCards] = useState<ICard[]>([]);
     const [valueSearch, setValueSearch] = useState("");
@@ -46,6 +47,7 @@ export default function Dashboard() {
     const [dialogTitle, setDialogTitle] = useState("");
 
     function CleanBranchData() {
+        setEditBranchId(null);
         return setBranchData({
             PublicName: "",
             Email: "",
@@ -109,6 +111,48 @@ export default function Dashboard() {
         }, time);
         return;
     }
+
+    async function UpdateBranchAPI(BranchId: string, BranchValues: ICard) {
+        try {
+            const UserId = userData?.UserId;
+            if (!UserId) {
+                toast.error("Usuario no autenticado");
+                return;
+            }
+
+            const Branch = await httpClient(`/api/v1/sp/principals/:PrinicipalId/branches/:BranchId`, {
+                method: 'PUT',
+                pathParams: { PrinicipalId: UserId, BranchId },
+                body: {
+                    PublicName: BranchValues.PublicName,
+                    Email: BranchValues.Email,
+                    Address: BranchValues.Address,
+                    CityName: BranchValues.CityName,
+                    ZipCode: BranchValues.ZipCode,
+                    PhoneNumber: BranchValues.PhoneNumber,
+                    StateId: BranchValues.StateId
+                }
+            });
+
+            if (!Branch.ok) {
+                const Data: any = await Branch.json();
+                toast.error(Data.message);
+                if (totalBranches !== Data.stack?.current) {
+                    GetBranchesAPI();
+                }
+            } else {
+                toast.success("Sucursal actualizada exitosamente");
+                setOpenDialog(false);
+                CleanBranchData();
+                setValueSearch(""); // Reset search to fetch all branches
+                await GetBranchesAPI();
+            }
+
+        } catch (error) {
+            console.error("Error updating branch:", error);
+            toast.error("Ocurrió un error al actualizar la sucursal");
+        }
+    };
 
     async function AddBranchAPI(BranchValues: ICard) {
         try {
@@ -174,11 +218,19 @@ export default function Dashboard() {
         });
     };
 
-    function OnEdit(dialogTitle: string) {
-
+    function onEdit(data: ICard) {
+        setOpenDialog(true);
+        setBranchData({
+            ...data as any,
+            StateId: data.State.StateId
+        });
+        setEditBranchId(data.InstitutionId);
+        setDialogTitle("Editar Sucursal");
     }
 
     function AddBranch() {
+        CleanBranchData();
+
         if (totalBranches < userData?.Plan.BranchLimit) {
             setOpenDialog(true)
             setDialogTitle("Crear Sucursal");
@@ -297,9 +349,15 @@ export default function Dashboard() {
                                 Cancelar
                             </Button>
                             <Button onClick={async () => {
-                                await AddBranchAPI(branchData as ICard);
+                                console.log("Creating branch with data:", branchData);
+
+                                if (editBranchId) {
+                                    await UpdateBranchAPI(editBranchId, branchData as ICard);
+                                } else {
+                                    await AddBranchAPI(branchData as ICard);
+                                }
                             }} color="primary">
-                                Crear
+                                {editBranchId ? "Actualizar" : "Crear"}
                             </Button>
                         </DialogActions>
                     </Dialog>
@@ -309,6 +367,7 @@ export default function Dashboard() {
                     onValue={SearchText}
                     onLoading={loading}
                     onDelete={RemoveBranchFromList}
+                    onEdit={onEdit}
                 />
             </Container>
         </DashboardLayout>

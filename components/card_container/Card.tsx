@@ -43,9 +43,10 @@ export interface ICard {
 interface CardComponentProps {
     properties: ICard;
     onDelete?: (institutionId: string) => void;
+    onEdit?: (data: ICard) => void;
 }
 
-export default function CardComponent({ properties, onDelete }: CardComponentProps) {
+export default function CardComponent({ properties, onDelete, onEdit }: CardComponentProps) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const { userData } = useAuth();
@@ -75,6 +76,7 @@ export default function CardComponent({ properties, onDelete }: CardComponentPro
         event.stopPropagation();
         handleMenuClose();
         // Lógica para editar
+        onEdit?.(properties);
     };
 
     const handleDelete = async () => {
