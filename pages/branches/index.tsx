@@ -135,13 +135,10 @@ export default function Dashboard() {
 
             if (!Branch.ok) {
                 const Data: any = await Branch.json();
-                if (Data.code === 402) {
-                    setOpenDialog(false);
-                    CleanBranchData();
-                } else {
-                    toast.error(Data.message);
+                toast.error(Data.message);
+                if (totalBranches !== Data.stack?.current) {
+                    GetBranchesAPI();
                 }
-
             } else {
                 toast.success("Sucursal creada exitosamente");
                 setOpenDialog(false);
@@ -170,9 +167,11 @@ export default function Dashboard() {
     }
 
     const RemoveBranchFromList = (institutionId: string) => {
-        setCards((currentCards) =>
-            currentCards.filter((card) => card.InstitutionId !== institutionId)
-        );
+        setCards((currentCards) => {
+            const updatedCards = currentCards.filter((card) => card.InstitutionId !== institutionId)
+            setTotalBranches(updatedCards.length);
+            return updatedCards;
+        });
     };
 
     function OnEdit(dialogTitle: string) {
@@ -291,7 +290,10 @@ export default function Dashboard() {
                             </Box>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={() => setOpenDialog(false)} color="primary">
+                            <Button onClick={() => {
+                                setOpenDialog(false);
+                                CleanBranchData();
+                            }} color="primary">
                                 Cancelar
                             </Button>
                             <Button onClick={async () => {
