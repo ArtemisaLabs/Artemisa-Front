@@ -28,6 +28,7 @@ import { States } from '../../utils/StatesData';
 export default function Dashboard() {
     const { userData } = useAuth();
     // const [profileData, setProfileData] = useState(null);
+    const [totalBranches, setTotalBranches] = useState(0);
 
     const [cards, setCards] = useState<ICard[]>([]);
     const [valueSearch, setValueSearch] = useState("");
@@ -41,6 +42,8 @@ export default function Dashboard() {
         PhoneNumber: "",
         StateId: ""
     });
+
+    const [dialogTitle, setDialogTitle] = useState("");
 
     function CleanBranchData() {
         return setBranchData({
@@ -73,6 +76,9 @@ export default function Dashboard() {
             } else {
                 console.log("Branches Data:", Data.results);
                 setCards(Data.results);
+
+                setTotalBranches(Data.results.length);
+
                 if (debouncedValueSearch === "") {
                     setLoading(false); // Stop loading if no results found
                 } else {
@@ -169,6 +175,19 @@ export default function Dashboard() {
         );
     };
 
+    function OnEdit(dialogTitle: string) {
+
+    }
+
+    function AddBranch() {
+        if (totalBranches < userData?.Plan.BranchLimit) {
+            setOpenDialog(true)
+            setDialogTitle("Crear Sucursal");
+        } else {
+            toast.error("Has alcanzado el límite de sucursales para tu plan: " + "(" + totalBranches + "/" + userData?.Plan.BranchLimit + ")");
+        }
+    }
+
     return (
         <DashboardLayout>
             <Container maxWidth={false}>
@@ -184,12 +203,12 @@ export default function Dashboard() {
                         Sucursales
                     </Typography>
 
-                    <Button variant="contained" color="primary" onClick={() => setOpenDialog(true)}>
+                    <Button variant="contained" color="primary" onClick={AddBranch}>
                         Crear Sucursal
                     </Button>
 
                     <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                        <DialogTitle>Crear Sucursal</DialogTitle>
+                        <DialogTitle>{dialogTitle}</DialogTitle>
                         <DialogContent>
                             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                                 <TextField

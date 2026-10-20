@@ -8,13 +8,13 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../utils/MyContext";
 
 export default function Dashboard() {
-    const { profileData } = useAuth();
+    const { userData } = useAuth();
 
     return (
         <DashboardLayout>
             {/* Solo pasas el contenido propio de la vista de inicio */}
             {/* <MainGrid /> */}
-            <p>Bienvenido, {profileData?.FullName || 'Usuario'}!</p>
+            <p>Bienvenido, {userData?.FullName || 'Usuario'}!</p>
         </DashboardLayout>
     );
 }
