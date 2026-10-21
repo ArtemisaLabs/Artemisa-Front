@@ -1,10 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import {
-    Box,
     Container,
-    TextField,
     Typography,
     CircularProgress,
     Grid
@@ -20,28 +17,8 @@ export interface CardContainerProps {
 }
 
 export default function CardContainer({ cardsData, onValue, onLoading, onDelete, onEdit }: CardContainerProps) {
-    const [search, setSearch] = useState("");
-
-    const onTyping = (value: string) => {
-        setSearch(value);
-        if (onValue) {
-            onValue(value);
-        }
-    };
-
     return (
-        <Container maxWidth={false} sx={{ mt: 4 }}>
-            <Box sx={{ mb: 2 }}>
-                <TextField
-                    fullWidth
-                    label="Buscar..."
-                    variant="outlined"
-                    value={search}
-                    onChange={(e) => onTyping(e.target.value)}
-                    sx={{ mb: 2 }}
-                />
-            </Box>
-
+        <Container disableGutters maxWidth={false} sx={{ mt: 2 }}>
             <Grid container spacing={2}>
                 {onLoading ? (
                     <Grid size={12} sx={{ textAlign: 'center', py: 4 }}>

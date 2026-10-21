@@ -20,7 +20,9 @@ import {
     DialogActions,
     TextField,
     FormControl,
-    Select
+    Select,
+    Stack,
+    Grid
 } from '@mui/material';
 import { ICard } from '../../components/card_container/Card';
 import { States } from '../../utils/StatesData';
@@ -251,120 +253,133 @@ export default function Dashboard() {
                         gap: 4,
                     }}>
                     <Typography variant="h4" component="h1" gutterBottom>
-                        Sucursales
+                        Sucursales ({totalBranches})
+                        <Typography variant="subtitle2" component="p">
+                            Tu plan permite hasta {userData?.Plan.BranchLimit} sucursales.
+                        </Typography>
                     </Typography>
 
-                    <Button variant="contained" color="primary" onClick={AddBranch}>
-                        Crear Sucursal
-                    </Button>
+                    <Stack sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: 6 }}>
+                        <TextField
+                            fullWidth
+                            label="Buscar..."
+                            variant="outlined"
+                            value={valueSearch}
+                            onChange={(e) => SearchText(e.target.value)}
+                        />
 
-                    <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                        <DialogTitle>{dialogTitle}</DialogTitle>
-                        <DialogContent>
-                            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-                                <TextField
-                                    autoFocus
-                                    margin="dense"
-                                    label="Nombre"
-                                    type="text"
-                                    fullWidth
-                                    value={branchData.PublicName || ""}
-                                    onChange={(e) => setBranchData({ ...branchData, PublicName: e.target.value })}
-                                />
-                                <TextField
-                                    margin="dense"
-                                    label="Email"
-                                    type="email"
-                                    fullWidth
-                                    value={branchData.Email || ""}
-                                    onChange={(e) => setBranchData({ ...branchData, Email: e.target.value })}
-                                />
-                            </Box>
-                            <br />
-
-                            <FormControl fullWidth>
-                                <InputLabel id="state-select-label">Selecciona un estado</InputLabel>
-                                <Select
-                                    labelId="state-select-label"
-                                    id="state-select"
-                                    value={branchData.StateId || ""}
-                                    label="Selecciona un estado"
-                                    onChange={(e) => setBranchData({ ...branchData, StateId: e.target.value })}
-                                >
-                                    <MenuItem value="">
-                                        <em>Ninguno / Limpiar selección</em>
-                                    </MenuItem>
-                                    {States.map((state) => (
-                                        <MenuItem key={state.StateId} value={state.StateId}>
-                                            {state.Name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                            <br />
-
-                            <TextField
-                                margin="dense"
-                                label="Ciudad"
-                                type="text"
-                                fullWidth
-                                value={branchData.CityName || ""}
-                                onChange={(e) => setBranchData({ ...branchData, CityName: e.target.value })}
-                            />
-
-                            <TextField
-                                margin="dense"
-                                label="Dirección"
-                                type="text"
-                                fullWidth
-                                value={branchData.Address || ""}
-                                onChange={(e) => setBranchData({ ...branchData, Address: e.target.value })}
-                            />
-                            <br />
-
-                            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-                                <TextField
-                                    margin="dense"
-                                    label="Código Postal"
-                                    type="number"
-                                    fullWidth
-                                    value={branchData.ZipCode || ""}
-                                    onChange={(e) => setBranchData({ ...branchData, ZipCode: e.target.value })}
-                                />
-                                <TextField
-                                    margin="dense"
-                                    label="Teléfono"
-                                    type="number"
-                                    fullWidth
-                                    value={branchData.PhoneNumber || ""}
-                                    onChange={(e) => setBranchData({ ...branchData, PhoneNumber: e.target.value })}
-                                />
-                            </Box>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={() => {
-                                setOpenDialog(false);
-                                CleanBranchData();
-                            }} color="primary">
-                                Cancelar
-                            </Button>
-                            <Button onClick={async () => {
-                                console.log("Creating branch with data:", branchData);
-
-                                if (editBranchId) {
-                                    await UpdateBranchAPI(editBranchId, branchData as ICard);
-                                } else {
-                                    await AddBranchAPI(branchData as ICard);
-                                }
-                            }} color="primary">
-                                {editBranchId ? "Actualizar" : "Crear"}
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
+                        <Button sx={{ minWidth: 150 }} variant="contained" color="primary" onClick={AddBranch}>
+                            Crear Sucursal
+                        </Button>
+                    </Stack>
                 </Box>
+
+                {/* Dialog for creating or editing a branch */}
+                <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                    <DialogTitle>{dialogTitle}</DialogTitle>
+                    <DialogContent>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                label="Nombre"
+                                type="text"
+                                fullWidth
+                                value={branchData.PublicName || ""}
+                                onChange={(e) => setBranchData({ ...branchData, PublicName: e.target.value })}
+                            />
+                            <TextField
+                                margin="dense"
+                                label="Email"
+                                type="email"
+                                fullWidth
+                                value={branchData.Email || ""}
+                                onChange={(e) => setBranchData({ ...branchData, Email: e.target.value })}
+                            />
+                        </Box>
+                        <br />
+
+                        <FormControl fullWidth>
+                            <InputLabel id="state-select-label">Selecciona un estado</InputLabel>
+                            <Select
+                                labelId="state-select-label"
+                                id="state-select"
+                                value={branchData.StateId || ""}
+                                label="Selecciona un estado"
+                                onChange={(e) => setBranchData({ ...branchData, StateId: e.target.value })}
+                            >
+                                <MenuItem value="">
+                                    <em>Ninguno / Limpiar selección</em>
+                                </MenuItem>
+                                {States.map((state) => (
+                                    <MenuItem key={state.StateId} value={state.StateId}>
+                                        {state.Name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <br />
+
+                        <TextField
+                            margin="dense"
+                            label="Ciudad"
+                            type="text"
+                            fullWidth
+                            value={branchData.CityName || ""}
+                            onChange={(e) => setBranchData({ ...branchData, CityName: e.target.value })}
+                        />
+
+                        <TextField
+                            margin="dense"
+                            label="Dirección"
+                            type="text"
+                            fullWidth
+                            value={branchData.Address || ""}
+                            onChange={(e) => setBranchData({ ...branchData, Address: e.target.value })}
+                        />
+                        <br />
+
+                        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+                            <TextField
+                                margin="dense"
+                                label="Código Postal"
+                                type="number"
+                                fullWidth
+                                value={branchData.ZipCode || ""}
+                                onChange={(e) => setBranchData({ ...branchData, ZipCode: e.target.value })}
+                            />
+                            <TextField
+                                margin="dense"
+                                label="Teléfono"
+                                type="number"
+                                fullWidth
+                                value={branchData.PhoneNumber || ""}
+                                onChange={(e) => setBranchData({ ...branchData, PhoneNumber: e.target.value })}
+                            />
+                        </Box>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => {
+                            setOpenDialog(false);
+                            CleanBranchData();
+                        }} color="primary">
+                            Cancelar
+                        </Button>
+                        <Button onClick={async () => {
+                            console.log("Creating branch with data:", branchData);
+
+                            if (editBranchId) {
+                                await UpdateBranchAPI(editBranchId, branchData as ICard);
+                            } else {
+                                await AddBranchAPI(branchData as ICard);
+                            }
+                        }} color="primary">
+                            {editBranchId ? "Actualizar" : "Crear"}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <CardContainer
                     cardsData={cards}
-                    onValue={SearchText}
                     onLoading={loading}
                     onDelete={RemoveBranchFromList}
                     onEdit={onEdit}

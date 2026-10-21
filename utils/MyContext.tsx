@@ -10,7 +10,7 @@ interface UserData {
   FullName: string;
   Plan: {
     PlanId: string;
-    PlanName: string;
+    Name: string;
     BranchLimit: number;
   }
 }
