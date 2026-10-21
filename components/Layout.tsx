@@ -42,16 +42,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     backgroundColor: theme.vars
                                         ? `rgba(${theme.vars.palette.background.defaultChannel} / 1)`
                                         : alpha(theme.palette.background.default, 1),
-                                    overflow: 'auto',
+                                    overflow: 'auto'
                                 })}
                             >
                                 <Stack
                                     spacing={2}
                                     sx={{
                                         alignItems: 'center',
-                                        mx: 3,
+                                        mx: 2,
                                         pb: 5,
-                                        mt: { xs: 8, md: 0 },
+                                        mt: { xs: 8, md: 0 }
                                     }}
                                 >
                                     <Header />

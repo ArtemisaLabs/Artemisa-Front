@@ -96,7 +96,7 @@ export default function CardComponent({ properties, onDelete, onEdit }: CardComp
                     PrinicipalId: UserId
                 }
             });
-            
+
             const responseText = await response.text();
             let Data: { message?: string } = {};
 
@@ -129,7 +129,7 @@ export default function CardComponent({ properties, onDelete, onEdit }: CardComp
 
     return (
         <>
-            <Card sx={{ minWidth: 275, marginBottom: 2, position: 'relative' }}>
+            <Card sx={{ maxWidth: '250px', marginBottom: 2, position: 'relative' }}>
                 {/* 1. Área clickeable principal */}
                 <CardActionArea onClick={handleCardClick}>
                     <CardMedia
@@ -137,6 +137,7 @@ export default function CardComponent({ properties, onDelete, onEdit }: CardComp
                         height="140"
                         image={`https://ui-avatars.com/api/?name=${properties.PublicName}&background=random&size=128`}
                         alt={properties.PublicName}
+                        sx={{ mb: 2 }}
                     />
 
                     <CardContent sx={{ pb: 5 }}>

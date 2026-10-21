@@ -7,12 +7,12 @@ import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
   margin: theme.spacing(1, 0),
   [`& .${breadcrumbsClasses.separator}`]: {
-    color: (theme.vars || theme).palette.action.disabled,
-    margin: 1,
+    color: (theme.vars || theme).palette.action.disabled
   },
   [`& .${breadcrumbsClasses.ol}`]: {
     alignItems: 'center',
   },
+  borderBottom: 'none'
 }));
 
 const routeNames: { [key: string]: string } = {
