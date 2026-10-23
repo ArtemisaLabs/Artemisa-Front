@@ -49,7 +49,7 @@ export default function Dashboard() {
     const [dialogTitle, setDialogTitle] = useState("");
 
     function CleanBranchData() {
-        setEditBranchId(null);
+        if (openDialog == false) setEditBranchId(null);
         return setBranchData({
             PublicName: "",
             Email: "",
@@ -365,9 +365,7 @@ export default function Dashboard() {
                         }} color="primary">
                             Cancelar
                         </Button>
-                        <Button onClick={async () => {
-                            console.log("Creating branch with data:", branchData);
-
+                        <Button variant="contained" onClick={async () => {
                             if (editBranchId) {
                                 await UpdateBranchAPI(editBranchId, branchData as ICard);
                             } else {
